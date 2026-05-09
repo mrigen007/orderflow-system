@@ -37,7 +37,7 @@ public class OrderEventConsumer {
         String eventType = (String) eventMap.get("eventType");
 
         if (eventType == null) {
-            log.warn("⚠️ Missing eventType");
+            log.warn(" Missing eventType");
             return;
         }
 
@@ -46,7 +46,7 @@ public class OrderEventConsumer {
             OrderCreatedEvent event =
                     objectMapper.convertValue(eventMap, OrderCreatedEvent.class);
 
-            log.info("📦 Processing ORDER_CREATED for order: {}", event.getOrderId());
+            log.info(" Processing ORDER_CREATED for order: {}", event.getOrderId());
 
             notificationService.sendNotification(
                     event.getTenantId(),

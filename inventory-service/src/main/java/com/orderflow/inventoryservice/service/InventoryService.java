@@ -29,7 +29,7 @@ public class InventoryService {
 
     @Transactional
     public ReserveStockResponse reserveStock(String tenantId, ReserveStockRequest request) {
-        log.info("📦 Reserving stock - Tenant: {}, Product: {}, Quantity: {}, Order: {}",
+        log.info(" Reserving stock - Tenant: {}, Product: {}, Quantity: {}, Order: {}",
                 tenantId, request.productId(), request.quantity(), request.orderId());
 
         Product product = productRepository.findByTenantIdAndProductIdWithLock(tenantId, request.productId())
@@ -60,7 +60,7 @@ public class InventoryService {
 
         reservationRepository.save(reservation);
 
-        log.info("✅ Stock reserved - Reservation ID: {}, Product: {}, Quantity: {}",
+        log.info(" Stock reserved - Reservation ID: {}, Product: {}, Quantity: {}",
                 reservationId, request.productId(), request.quantity());
 
         return new ReserveStockResponse(
@@ -80,7 +80,7 @@ public class InventoryService {
                 .orElseThrow(() -> new ReservationNotFoundException(reservationId));
 
         if (reservation.getStatus() != ReservationStatus.ACTIVE) {
-            log.warn("⚠️ Reservation {} is not active (status: {})", reservationId, reservation.getStatus());
+            log.warn(" Reservation {} is not active (status: {})", reservationId, reservation.getStatus());
             return;
         }
 
@@ -95,18 +95,18 @@ public class InventoryService {
         reservation.setStatus(ReservationStatus.RELEASED);
         reservationRepository.save(reservation);
 
-        log.info("✅ Reservation released: {}, Quantity: {}", reservationId, reservation.getQuantity());
+        log.info(" Reservation released: {}, Quantity: {}", reservationId, reservation.getQuantity());
     }
 
     @Transactional
     public void confirmReservation(String reservationId) {
-        log.info("✅ Confirming reservation: {}", reservationId);
+        log.info(" Confirming reservation: {}", reservationId);
 
         StockReservation reservation = reservationRepository.findByReservationId(reservationId)
                 .orElseThrow(() -> new ReservationNotFoundException(reservationId));
 
         if (reservation.getStatus() != ReservationStatus.ACTIVE) {
-            log.warn("⚠️ Reservation {} is not active", reservationId);
+            log.warn(" Reservation {} is not active", reservationId);
             return;
         }
 
@@ -121,7 +121,7 @@ public class InventoryService {
         reservation.setStatus(ReservationStatus.CONFIRMED);
         reservationRepository.save(reservation);
 
-        log.info("✅ Reservation confirmed: {}", reservationId);
+        log.info(" Reservation confirmed: {}", reservationId);
     }
 
     public StockStatusResponse getStockStatus(String tenantId, Long productId) {
@@ -179,6 +179,6 @@ public class InventoryService {
             productRepository.save(keyboard);
         }
 
-        log.info("✅ Sample products initialized");
+        log.info(" Sample products initialized");
     }
 }

@@ -52,7 +52,7 @@ public class OrderSagaOrchestrator {
     public void executeSaga(String sagaId) {
         OrderSaga saga = sagaStore.get(sagaId);
         if (saga == null) {
-            log.error("❌ Saga not found: {}", sagaId);
+            log.error(" Saga not found: {}", sagaId);
             return;
         }
 
@@ -73,7 +73,7 @@ public class OrderSagaOrchestrator {
             completeSaga(saga);
 
         } catch (SagaException e) {
-            log.error("❌ Saga step failed: {} - {}", e.getStep(), e.getMessage());
+            log.error(" Saga step failed: {} - {}", e.getStep(), e.getMessage());
             compensateSaga(saga, e.getStep(), e.getMessage());
         }
     }
@@ -90,7 +90,7 @@ public class OrderSagaOrchestrator {
             saga.addCompletedStep(SagaStep.CREATE_ORDER);
             saga.setState(SagaState.ORDER_CREATED);
 
-            log.info("✅ Step 1 complete: Order created");
+            log.info(" Step 1 complete: Order created");
 
         } catch (Exception e) {
             throw new SagaException(SagaStep.CREATE_ORDER, "Failed to create order: " + e.getMessage());
@@ -108,7 +108,7 @@ public class OrderSagaOrchestrator {
             saga.addCompletedStep(SagaStep.PROCESS_PAYMENT);
             saga.setState(SagaState.PAYMENT_PROCESSED);
 
-            log.info("✅ Step 2 complete: Payment processed - Transaction: {}", transactionId);
+            log.info(" Step 2 complete: Payment processed - Transaction: {}", transactionId);
 
         } catch (Exception e) {
             throw new SagaException(SagaStep.PROCESS_PAYMENT, "Payment failed: " + e.getMessage());
@@ -116,7 +116,7 @@ public class OrderSagaOrchestrator {
     }
 
     private void executeReserveInventory(OrderSaga saga) throws SagaException {
-        log.info("📦 Step 3: Reserve Inventory - Order ID: {}", saga.getOrderId());
+        log.info(" Step 3: Reserve Inventory - Order ID: {}", saga.getOrderId());
 
         try {
             // Simulate inventory reservation (call external inventory service)
@@ -126,7 +126,7 @@ public class OrderSagaOrchestrator {
             saga.addCompletedStep(SagaStep.RESERVE_INVENTORY);
             saga.setState(SagaState.INVENTORY_RESERVED);
 
-            log.info("✅ Step 3 complete: Inventory reserved - Reservation: {}", reservationId);
+            log.info(" Step 3 complete: Inventory reserved - Reservation: {}", reservationId);
 
         } catch (Exception e) {
             throw new SagaException(SagaStep.RESERVE_INVENTORY, "Inventory reservation failed: " + e.getMessage());
@@ -143,7 +143,7 @@ public class OrderSagaOrchestrator {
             saga.setShipmentId(shipmentId);
             saga.addCompletedStep(SagaStep.CREATE_SHIPMENT);
 
-            log.info("✅ Step 4 complete: Shipment created - Shipment: {}", shipmentId);
+            log.info(" Step 4 complete: Shipment created - Shipment: {}", shipmentId);
 
         } catch (Exception e) {
             throw new SagaException(SagaStep.CREATE_SHIPMENT, "Shipment creation failed: " + e.getMessage());
@@ -155,7 +155,7 @@ public class OrderSagaOrchestrator {
     // =====================================
 
     private void compensateSaga(OrderSaga saga, SagaStep failedStep, String reason) {
-        log.warn("⚠️ Compensating saga: {} - Failed at step: {}", saga.getSagaId(), failedStep);
+        log.warn("Compensating saga: {} - Failed at step: {}", saga.getSagaId(), failedStep);
 
         saga.setFailedStep(failedStep);
         saga.setFailureReason(reason);
@@ -166,7 +166,7 @@ public class OrderSagaOrchestrator {
             try {
                 compensateStep(saga, step);
             } catch (Exception e) {
-                log.error("❌ Compensation failed for step: {} - {}", step, e.getMessage());
+                log.error("Compensation failed for step: {} - {}", step, e.getMessage());
                 // Continue compensating other steps
             }
         }
@@ -174,11 +174,11 @@ public class OrderSagaOrchestrator {
         saga.setState(SagaState.COMPENSATED);
         saga.setCompletedAt(LocalDateTime.now());
 
-        log.info("🔄 Saga compensated: {}", saga.getSagaId());
+        log.info("Saga compensated: {}", saga.getSagaId());
     }
 
     private void compensateStep(OrderSaga saga, SagaStep step) {
-        log.info("🔙 Compensating step: {}", step);
+        log.info("Compensating step: {}", step);
 
         switch (step) {
             case CREATE_SHIPMENT -> {
@@ -237,7 +237,7 @@ public class OrderSagaOrchestrator {
 
     private String simulateInventoryService(OrderSaga saga) {
         // Simulate inventory check
-        log.info("📦 [INVENTORY SERVICE] Reserving stock for order {}", saga.getOrderId());
+        log.info(" [INVENTORY SERVICE] Reserving stock for order {}", saga.getOrderId());
 
         // Simulate random failure (15% chance)
         if (Math.random() < 0.15) {

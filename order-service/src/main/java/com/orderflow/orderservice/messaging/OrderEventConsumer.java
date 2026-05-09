@@ -39,7 +39,7 @@
 //    }
 //
 //    private void handleOrderCreated(OrderCreatedEvent event) {
-//        log.info("📦 ORDER CREATED - Order ID: {}, Customer: {}, Total: ${}",
+//        log.info(" ORDER CREATED - Order ID: {}, Customer: {}, Total: ${}",
 //                event.getOrderId(),
 //                event.getCustomerId(),
 //                event.getTotalAmount());
@@ -51,7 +51,7 @@
 //                event.getCustomerId());
 //
 //        // 2. Inventory Service - Reserve stock
-//        log.info("📦 [INVENTORY SERVICE] Reserving stock for {} items",
+//        log.info(" [INVENTORY SERVICE] Reserving stock for {} items",
 //                event.getItems().size());
 //
 //        // 3. Analytics Service - Track metrics
@@ -71,7 +71,7 @@
 //        // Different actions based on new status
 //        switch (event.getNewStatus()) {
 //            case CONFIRMED -> {
-//                log.info("✅ [PAYMENT SERVICE] Processing payment for order {}",
+//                log.info(" [PAYMENT SERVICE] Processing payment for order {}",
 //                        event.getOrderId());
 //                log.info("📧 [NOTIFICATION SERVICE] Sending confirmation email");
 //            }
@@ -85,7 +85,7 @@
 //                log.info("📧 [NOTIFICATION SERVICE] Sending tracking email");
 //            }
 //            case DELIVERED -> {
-//                log.info("✅ [DELIVERY SERVICE] Order {} delivered",
+//                log.info(" [DELIVERY SERVICE] Order {} delivered",
 //                        event.getOrderId());
 //                log.info("⭐ [REVIEW SERVICE] Requesting customer feedback");
 //            }
@@ -93,7 +93,7 @@
 //    }
 //
 //    private void handleOrderCancelled(OrderCancelledEvent event) {
-//        log.info("❌ ORDER CANCELLED - Order ID: {}, Reason: {}",
+//        log.info(" ORDER CANCELLED - Order ID: {}, Reason: {}",
 //                event.getOrderId(),
 //                event.getCancellationReason());
 //
@@ -102,7 +102,7 @@
 //                event.getOrderId());
 //
 //        // 2. Inventory Service - Release stock
-//        log.info("📦 [INVENTORY SERVICE] Releasing reserved stock");
+//        log.info(" [INVENTORY SERVICE] Releasing reserved stock");
 //
 //        // 3. Notification Service - Send cancellation email
 //        log.info("📧 [NOTIFICATION SERVICE] Sending cancellation confirmation");

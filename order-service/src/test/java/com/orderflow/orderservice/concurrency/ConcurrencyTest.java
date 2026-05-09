@@ -155,7 +155,7 @@ class ConcurrencyTest {
             throw new AssertionError("Should have thrown OptimisticLockException");
         } catch (ObjectOptimisticLockingFailureException ex) {
             // Expected - version mismatch detected
-            System.out.println("✅ Optimistic lock prevented lost update!");
+            System.out.println(" Optimistic lock prevented lost update!");
         }
 
         // Verify final state - Thread A's update preserved
@@ -224,17 +224,17 @@ class ConcurrencyTest {
         OrderDTO order = orderService.createOrder(createRequest);
 
         System.out.println("\n=== OPTIMISTIC LOCKING ===");
-        System.out.println("✅ Allows concurrent reads");
-        System.out.println("✅ Detects conflicts on write");
-        System.out.println("✅ Better performance for low-conflict scenarios");
-        System.out.println("❌ Requires retry logic");
+        System.out.println(" Allows concurrent reads");
+        System.out.println(" Detects conflicts on write");
+        System.out.println(" Better performance for low-conflict scenarios");
+        System.out.println(" Requires retry logic");
         System.out.println("Use case: Most order updates (conflicts rare)");
 
         System.out.println("\n=== PESSIMISTIC LOCKING ===");
-        System.out.println("✅ Prevents conflicts entirely");
-        System.out.println("✅ No retry needed");
-        System.out.println("❌ Blocks other transactions");
-        System.out.println("❌ Lower throughput");
+        System.out.println(" Prevents conflicts entirely");
+        System.out.println(" No retry needed");
+        System.out.println(" Blocks other transactions");
+        System.out.println(" Lower throughput");
         System.out.println("Use case: Critical financial operations");
 
         // Both achieve same result, different trade-offs

@@ -1,7 +1,7 @@
 package com.orderflow.inventoryservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.orderflow.inventoryservice.dto.ReserveStockRequest;  // ← ADD THIS IMPORT
+import com.orderflow.inventoryservice.dto.ReserveStockRequest;
 import com.orderflow.inventoryservice.event.OrderCancelledEvent;
 import com.orderflow.inventoryservice.event.OrderCreatedEvent;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +33,12 @@ public class OrderEventConsumer {
             @Header(KafkaHeaders.OFFSET) long offset
     ) {
 
-        log.info("📨 [INVENTORY] Received event from partition: {} offset: {}", partition, offset);
+        log.info("[INVENTORY] Received event from partition: {} offset: {}", partition, offset);
 
         String eventType = (String) eventMap.get("eventType");
 
         if (eventType == null) {
-            log.warn("⚠️ Event without eventType field: {}", eventMap);
+            log.warn("Event without eventType field: {}", eventMap);
             return;
         }
 
@@ -49,15 +49,15 @@ public class OrderEventConsumer {
                     OrderCreatedEvent event =
                             objectMapper.convertValue(eventMap, OrderCreatedEvent.class);
 
-                    log.info("📦 Processing ORDER_CREATED for order: {}", event.getOrderId());
+                    log.info("Processing ORDER_CREATED for order: {}", event.getOrderId());
 
                     inventoryService.initializeSampleProducts(event.getTenantId());
 
-                    // ✅ RESERVE STOCK FOR EACH ITEM
+                    //RESERVE STOCK FOR EACH ITEM
                     if (event.getItems() != null) {
                         for (OrderCreatedEvent.OrderItemData item : event.getItems()) {
                             try {
-                                log.info("🔒 Reserving stock: Product={} Qty={}",
+                                log.info("Reserving stock: Product={} Qty={}",
                                         item.getProductId(), item.getQuantity());
 
                                 ReserveStockRequest request = new ReserveStockRequest(
@@ -68,16 +68,16 @@ public class OrderEventConsumer {
 
                                 inventoryService.reserveStock(event.getTenantId(), request);
 
-                                log.info("✅ Reserved: Product={} Qty={}",
+                                log.info("Reserved: Product={} Qty={}",
                                         item.getProductId(), item.getQuantity());
 
                             } catch (Exception e) {
-                                log.error("❌ Failed to reserve product {}: {}",
+                                log.error("Failed to reserve product {}: {}",
                                         item.getProductId(), e.getMessage());
                             }
                         }
                     } else {
-                        log.warn("⚠️ No items in ORDER_CREATED event for order: {}",
+                        log.warn("No items in ORDER_CREATED event for order: {}",
                                 event.getOrderId());
                     }
                 }
@@ -86,14 +86,14 @@ public class OrderEventConsumer {
                     OrderCancelledEvent event =
                             objectMapper.convertValue(eventMap, OrderCancelledEvent.class);
 
-                    log.info("❌ Processing ORDER_CANCELLED for order: {}", event.getOrderId());
+                    log.info("Processing ORDER_CANCELLED for order: {}", event.getOrderId());
                 }
 
                 default -> log.warn("Unknown event type: {}", eventType);
             }
 
         } catch (Exception e) {
-            log.error("❌ Error processing event", e);
+            log.error("Error processing event", e);
         }
     }
 }
