@@ -1,86 +1,66 @@
 spring:
   application:
     name: inventory-service
-
   datasource:
     url: jdbc:postgresql://inventory-db:5432/inventorydb
-    username: invuser
-    password: invpass
+    username: inventoryuser
+    password: inventorypass
     driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
-
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        jdbc:
-          batch_size: 20
-        order_inserts: true
-        order_updates: true
-
   kafka:
     bootstrap-servers: kafka:29092
     consumer:
       group-id: inventory-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest
-      enable-auto-commit: true
+      enable-auto-commit: false
       properties:
         spring.json.trusted.packages: "*"
     listener:
-      concurrency: 2
-      ack-mode: batch
+      ack-mode: manual
 
 server:
   port: 8082
-  shutdown: graceful
-  tomcat:
-    threads:
-      max: 200
-      min-spare: 10
-    connection-timeout: 20000
 
-# Actuator endpoints for monitoring
+# Enhanced Observability Configuration
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
-
+      base-path: /actuator
   endpoint:
     health:
       show-details: always
-
-  prometheus:
-    metrics:
-      export:
+      probes:
         enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: docker
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
 
-# Logging
+# Logging Configuration
 logging:
   level:
     root: INFO
-    com.orderflow: DEBUG
-    org.springframework.kafka: INFO
-    org.hibernate.SQL: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-# Inventory-specific settings
-inventory:
-  reservation:
-    default-expiry-hours: 24
-    cleanup-interval-minutes: 60
-  stock:
-    low-threshold: 10
+    com.orderflow: INFO
+    org.springframework.kafka: WARN
+    org.hibernate: WARN

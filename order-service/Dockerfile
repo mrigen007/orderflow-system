@@ -4,18 +4,23 @@
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first for better layer caching
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
+# Install Maven
+RUN apt-get update && \
+    apt-get install -y maven && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Download dependencies (this layer will be cached if pom.xml doesn't change)
-RUN ./mvnw dependency:go-offline -B -U
+# Copy pom.xml first for dependency caching
+COPY pom.xml ./
+
+# Download dependencies
+RUN mvn dependency:go-offline -B -U
 
 # Copy source code
 COPY src ./src
 
-# Build the application (skip tests for faster builds, run tests in CI/CD)
-RUN ./mvnw clean package -Dmaven.test.skip=true -B
+# Build the application
+RUN mvn clean package -DskipTests -B
 
 # =====================================
 # Runtime Stage

@@ -194,6 +194,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+      zipkin:
+        condition: service_started
     networks:
       - orderflow-network
 

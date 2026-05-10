@@ -1,23 +1,56 @@
 # Build artifacts
 target/
-!target/*.jar
+*.jar
+*.war
+*.class
 
 # IDE files
 .idea/
-.vscode/
 *.iml
-*.ipr
-*.iws
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+.springBeans
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Logs
+*.log
+logs/
+
+# Test files
+src/test/
+test-results/
+
+# Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
 
-# Temporary files
-*.tmp
-*.bak
-*.swp
-*~
+# CI/CD
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+
+# Environment files
+.env
+*.env.local
