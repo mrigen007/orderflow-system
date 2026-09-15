@@ -7,6 +7,4 @@ Distributed Event-Driven Order Management System built using:
 - Kafka
 - Redis
 - Docker
-- JWT Authentication
-- API Gateway
 - Observability
